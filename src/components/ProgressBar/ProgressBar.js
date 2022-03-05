@@ -38,36 +38,43 @@ const ProgressBar = ({ value = 0, size = 'medium', className }) => {
     value = 0;
   }
 
+  
+
   if (value > 100 || value < 0 || typeof value != 'number') {
     throw new Error('Value must be a number between 0 and 100.');
+  }
+
+  if (!styles) {
+    throw new Error(`Unknown size passed to ProgressBar: ${size}`);
   }
 
   let FillBarComponent = size === 'large' ? LargeFillBar : FillBar;
 
   return (
-    <ProgressBarBase
-      className={className}
+    <Wrapper
       style={styles}
+      role="progressbar"
       aria-valuemin="0"
       aria-valuemax="100"
       aria-valuenow={value}
     >
       <FillBarComponent style={styles} size={size} value={value}>
-        <VisuallyHidden>{value}</VisuallyHidden>
+        <VisuallyHidden>{value}%</VisuallyHidden>
       </FillBarComponent>
-    </ProgressBarBase>
+    </Wrapper>
   );
 };
 
-const ProgressBarBase = styled.strong`
+const Wrapper = styled.div`
   display: inline-block;
-  position: relative;
   height: var(--height);
   width: var(--width);
   padding: var(--padding);
   background-color: ${COLORS.transparentGray15};
   border-radius: var(--borderRadius);
   box-shadow: inset 0px 2px 4px ${COLORS.transparentGray35};
+  /* Trim off corners when progress bar is nearly full. */
+  overflow: hidden;
 `;
 
 const FillBar = styled.span`
